@@ -1,0 +1,14 @@
+---
+- hosts: test-kitchen
+
+  vars:
+    jenkins_role: slave
+    jenkins_master_url: "http://172.29.129.172:8080"
+    jenkins_slave_name: "slave-test-kitchen"
+
+  vars_files:
+    - roles/ansible-jenkins/test/{{ ansible_os_family|lower }}.yml
+
+  roles:
+    - wunzeco.java
+    - ansible-jenkins

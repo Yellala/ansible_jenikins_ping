@@ -1,0 +1,17 @@
+---
+- hosts: test-kitchen
+
+  vars_files:
+    - roles/ansible-jenkins/test/vars.yml
+    - roles/ansible-jenkins/test/{{ ansible_os_family|lower }}.yml
+
+  roles:
+    - wunzeco.java
+    - ansible-jenkins
+
+
+## How to get list of installed plugins
+#     admin_password=$(sudo cat /var/lib/jenkins/secrets/initialAdminPassword)
+#     curl -s -k "http://admin:$admin_password@localhost:8080/pluginManager/api/json?depth=1" | \
+#           jq '.plugins[]|{n:.shortName, v:.version}' -c | \
+#           sed 's/.*:"\(.*\)",.*:"\(.*\)"}/  - "\2:\1"/' > plugins.list

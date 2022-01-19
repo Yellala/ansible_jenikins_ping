@@ -1,0 +1,180 @@
+---
+jenkins_role: master      # or slave
+
+jenkins_user:         jenkins
+jenkins_group:        "{{ jenkins_user }}"
+jenkins_home:         /var/lib/jenkins
+jenkins_admin_user:   admin
+jenkins_admin_pass:
+
+jenkins_helper_scripts_dir:    "{{ jenkins_home }}/scripts"
+jenkins_post_init_scripts_dir: "{{ jenkins_home }}/init.groovy.d"
+
+###########################
+## Config - Jenkins Master
+###########################
+#############
+## Config
+jenkins_args:
+  - "--webroot=/var/cache/$NAME/war"
+  - "--httpPort=$HTTP_PORT"
+jenkins_http_port:      "8080"
+jenkins_ajp_port:       "-1"
+jenkins_java_args:      []
+jenkins_max_open_files: 8192
+jenkins_executors:      5
+
+###################################
+# RHEL: /etc/sysconfig/jenkins
+jenkins_listen_address:          ''
+jenkins_https_port:              ''
+jenkins_https_keystore:          ''
+jenkins_https_keystore_password: ''
+jenkins_https_listen_address:    ''
+jenkins_debug_level:             5
+jenkins_enable_access_log:       'no'
+jenkins_handler_max:             100
+jenkins_handler_idle:            20
+
+#####################################
+## Package & Plugins - Jenkins Master
+#####################################
+
+jenkins_version:  "2.121.3"             # version number e.g. 2.60.2
+jenkins_apt_pkgs_extra: []
+jenkins_yum_pkgs_extra: []
+jenkins_pip_pkgs_extra: []
+
+jenkins_deb_pkg: "jenkins_{{ jenkins_version|mandatory }}_all.deb"
+jenkins_rpm_pkg: "jenkins-{{ jenkins_version|mandatory }}.noarch.rpm"
+
+jenkins_update_center_download_url: "http://updates.jenkins-ci.org/download"
+jenkins_plugins_dir:    "{{ jenkins_home }}/plugins"
+jenkins_update_plugins: true
+jenkins_plugins:        []           # A list of plugins in "pluginID:version" format. See example below
+
+
+jenkins_create_slave_ui_user: false
+jenkins_slave_agent_port: 49185
+
+######################
+## Jenkins Slave
+######################
+
+jenkins_slave_user:    jenkins-slave
+jenkins_slave_group:   "{{ jenkins_slave_user }}"
+jenkins_slave_home:    /home/{{ jenkins_slave_user }}
+
+jenkins_slave_version: 3.13
+jenkins_slave_jar:     "swarm-client-{{ jenkins_slave_version }}.jar"
+jenkins_slave_jar_url: "http://repo.jenkins-ci.org/releases/org/jenkins-ci/plugins/swarm-client/{{ jenkins_slave_version }}/{{ jenkins_slave_jar }}"
+jenkins_slave_checksum_file: "{{ jenkins_slave_jar }}.md5"
+jenkins_slave_checksum_file_url: "{{ jenkins_slave_jar_url }}.md5"
+
+jenkins_slave_ui_user:        jenkins-slave
+jenkins_slave_ui_pass:        "J3Nk1nsSl@ve"
+jenkins_slave_ui_user_email:  jenkins-slave@example.com
+jenkins_slave_ui_fullname:
+jenkins_slave_java_args:      []
+jenkins_master_url:           "http://localhost:8080"
+jenkins_slave_executors:      1
+jenkins_slave_labels:         [ "swarm-{{ ansible_default_ipv4.address }}" ]
+jenkins_slave_mode:           normal
+jenkins_slave_name:           ''
+jenkins_slave_extra_args:     [ '-disableSslVerification' ]
+jenkins_slave_description:    ''
+jenkins_slave_tool_locations: []
+#jenkins_slave_tool_locations:
+#  - name: aTool
+#    location: /path/to/tool
+jenkins_slave_auto_discovery_address: ''
+
+
+######################
+## Jenkins UI Users
+######################
+
+jenkins_ui_users: []
+
+## Note: Conscious decision made not to create other UI users based on the
+##       assumption that users will be allowed to sign up on Jenkins UI. The
+##       reason for this is to allow users manage their passwords.
+##
+##       For valid permissions values for granting Global Matrix permissions see
+##       script in this role at files/grant_global_matrix_permissions.groovy
+##
+## jenkins_ui_users:
+##   - username:
+##     permissions: [ global_read, job_build, job_cancel, job_configure,
+##                  job_create, job_discover, job_read, job_workspace ]
+
+
+###########
+## Example
+##    Note: Plugin version NOT specified implies "latest". So latest version of
+##          that plugin will be installed.
+##
+## jenkins_plugins:
+##   - 'ansicolor:0.4.2'
+##   - 'ant:1.2'
+##   - 'antisamy-markup-formatter:1.3'
+##   - 'authentication-tokens:1.2'
+##   - 'backup:1.6.1'
+##   - 'build-monitor-plugin:1.8+build.201601112328'
+##   - 'build-name-setter:1.6.3'
+##   - 'build-pipeline-plugin:1.5.2'
+##   - 'buildgraph-view:1.1.1'
+##   - 'claim:2.8'
+##   - 'copyartifact:1.38'
+##   - 'credentials-binding:1.7'
+##   - 'credentials:1.27'
+##   - 'cvs:2.12'
+##   - 'dashboard-view:2.9.7'
+##   - 'delivery-pipeline-plugin:0.9.9'
+##   - 'envinject:1.92.1'
+##   - 'external-monitor-job:1.4'
+##   - 'gatling:1.1.2'
+##   - 'ghprb:1.31.4'
+##   - 'git-client:1.19.6'
+##   - 'git:2.4.4'
+##   - 'github-api:1.72.1'
+##   - 'github-oauth:0.22.3'
+##   - 'github:1.18.2'
+##   - 'gradle:1.24'
+##   - 'groovy:1.29'
+##   - 'htmlpublisher:1.11'
+##   - 'icon-shim:2.0.3'
+##   - 'javadoc:1.3'
+##   - 'jclouds-jenkins:2.8.1-1'
+##   - 'job-dsl:1.45'
+##   - 'jquery:1.11.2-0'
+##   - 'junit:1.11'
+##   - 'ldap:1.11'
+##   - 'mailer:1.16'
+##   - 'mapdb-api:1.0.6.0'
+##   - 'matrix-auth:1.3.2'
+##   - 'matrix-project:1.6'
+##   - 'maven-plugin:2.12.1'
+##   - 'multiple-scms:0.6'
+##   - 'pam-auth:1.2'
+##   - 'parameterized-trigger:2.30'
+##   - 'plain-credentials:1.1'
+##   - 'radiatorviewplugin:1.26'
+##   - 'rebuild:1.25'
+##   - 'ruby-runtime:0.12'
+##   - 'rvm:0.4'
+##   - 'scm-api:1.2'
+##   - 'script-security:1.18.1'
+##   - 'simple-theme-plugin:0.3'
+##   - 'ssh-agent:1.10'
+##   - 'ssh-credentials:1.11'
+##   - 'ssh-slaves:1.10'
+##   - 'structs:1.1'
+##   - 'subversion:2.5.7'
+##   - 'timestamper:1.7.4'
+##   - 'token-macro:1.12.1'
+##   - 'translation:1.12'
+##   - 'violations:0.7.11'
+##   - 'windows-slaves:1.1'
+##   - 'workflow-step-api:2.0'
+##   - 'xvfb:1.1.3'
